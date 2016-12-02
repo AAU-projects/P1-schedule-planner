@@ -9,6 +9,8 @@
 #define MAX_TIME 6
 #define MAX_FLIGHT_MODEL 15
 
+int count_travel_types(char *type);
+
 typedef struct
 {
     char travel_type[MAX_TRAVEL];
@@ -20,23 +22,49 @@ typedef struct
 
 }flight_data;
 
+typedef struct
+{
+    flight_data *arrivals;
+    flight_data *departure;
+} flight_type;
+
 int main(void)
 {
 
-    count_travel_types("ARR");
+    int number_arrivals, number_departures;
 
-    flight_data arrivals[1];
-    flight_data departures[1];
+    number_arrivals = count_travel_types("ARR");
+    number_departures = count_travel_types("DPT");
+
+    flight_type flights[number_arrivals + number_departures];
+
+    flights->arrivals = (flight_data*)calloc(number_arrivals, sizeof(flight_data));
+    flights->departure = (flight_data*)calloc(number_departures, sizeof(flight_data));
+
+    return 0;
 }
 
 int count_travel_types(char *type)
 {
     FILE *fp = fopen("Flight_information", "r");
+    int count = 0;
+    int c;
+    char travel_type[MAX_TRAVEL];
 
-    if(!strcmp(type,"DPT"))
+    while ((c = fgetc(fp)) != EOF)
     {
+        fseek(fp,-1,SEEK_CUR);
+        fscanf(fp," %s %*s %*s %*s %*s %*s",
+                travel_type);
 
+        if (!strcmp(travel_type,type))
+        {
+            count += 1;
+            /*printf("%s \n",travel_type);*/
+        }
     }
 
     fclose(fp);
+
+    return count;
 }
