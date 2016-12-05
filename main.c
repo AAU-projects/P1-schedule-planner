@@ -24,7 +24,6 @@ typedef struct {
 } flight_type;
 
 int count_travel_types(char *type);
-
 void set_array_size(int arrivals, int departures, flight_type *flights);
 
 int main(void)
