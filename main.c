@@ -20,7 +20,7 @@ typedef struct {
 
 typedef struct {
     flight_data *arrivals;
-    flight_data *departure;
+    flight_data *departures;
 } flight_type;
 
 int count_travel_types(char *type);
@@ -37,6 +37,8 @@ int main(void)
 
     flight_type flights[total_flights];
     set_array_size(number_arrivals, number_departures, flights);
+
+    printf("%d %d\n",number_arrivals,number_departures);
 
     return 0;
 }
@@ -65,6 +67,6 @@ int count_travel_types(char *type)
 void set_array_size(int arrivals, int departures, flight_type *flights)
 {
     flights->arrivals = (flight_data *) calloc(arrivals, sizeof(flight_data));
-    flights->departure = (flight_data *) calloc(departures, sizeof(flight_data));
+    flights->departures = (flight_data *) calloc(departures, sizeof(flight_data));
 }
 
