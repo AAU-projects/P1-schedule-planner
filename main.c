@@ -11,6 +11,7 @@
 #define MAX_NAME 15
 #define MAX_WORKTIME 14
 #define PASSENGERS_PER_EMPLOYEE 38
+#define HOUR_MILITARYTIME 100
 
 typedef struct {
     char travel_type[MAX_TRAVEL];
@@ -199,20 +200,45 @@ int flights_in_interval(int length, char *interval, flight_type *flights, flight
 int find_empolyees_in_shifts(int length, flight_type *flights, char *shift)
 {
     double avg_passengers = find_avg_passengers(length, flights);
-    int start_hour, end_hour;
-    int flight_hour;
-    sscanf(shift," %d:%*d - %d:%*d",&start_hour, &end_hour);
-    
-    for (int i = start_hour; i < end_hour; ++i)
+    int start_hour, start_minute, start_time, end_hour, end_minute, end_time;
+    int flight_hour, flight_minute, flight_time, flight_hour_cmp, flight_minute_cmp, flight_time_cmp;
+    int max_flights_hour_interval = 0, flights_hour_interval = 0;
+
+    sscanf(shift," %d:%d - %d:%d",&start_hour, &start_minute, &end_hour, &end_minute);
+    start_time = start_hour * 100 + start_minute;
+    end_time = end_hour * 100 + end_minute;
+
+	//printf("start: %.4d end: %.4d\n", start_time, end_time);
+
+    for (int i = 0; i < length ; ++i) 
     {
-        for (int j = 0; j < length; ++j)
+        printf("%d flights for %s at %s and 1 hour forward\n\n", flights_hour_interval, flights[i - 1].flight_model, flights[i - 1].time);
+        if (max_flights_hour_interval < flights_hour_interval)
         {
-            sscanf(flights[i].time," %d:%*d",&flight_hour);
-            
+            printf("Found new max %d\n\n", flights_hour_interval);
+            max_flights_hour_interval = flights_hour_interval;
+        }
+        flights_hour_interval = 0;
+        sscanf(flights[i].time, "%d:%d", &flight_hour, &flight_minute);
+        flight_time = flight_hour * 100 + flight_minute;
+        for (int j = i; j < length; ++j)
+        {
+            sscanf(flights[j].time, "%d:%d", &flight_hour_cmp, &flight_minute_cmp);
+            flight_time_cmp = flight_hour_cmp * 100 + flight_minute_cmp;
+
+            printf("Flight forward 1 hour %d\n", flight_time + HOUR_MILITARYTIME);
+            printf("flight_cmp is this lower?: %d\n", flight_time_cmp);
+
+            if (flight_time <= flight_time_cmp && (flight_time + HOUR_MILITARYTIME) >= flight_time_cmp)
+            {
+                ++flights_hour_interval;
+                printf("YES\n");
+            }
         }
     }
-    
-    printf("%lf",avg_passengers);
+
+    printf("Max flights in a interval of one hour %d\n", max_flights_hour_interval);
+    printf("%lf\n",avg_passengers);
 }
 
 double find_avg_passengers(int length, flight_type *flights)
