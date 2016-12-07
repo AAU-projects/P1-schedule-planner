@@ -36,7 +36,7 @@ typedef struct {
         char friday[MAX_WORKTIME];
         char saturday[MAX_WORKTIME];
         char sunday[MAX_WORKTIME];
-    };
+    }worktime;
 } employee_type;
 
 /* prototypes */
