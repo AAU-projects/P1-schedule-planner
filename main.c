@@ -22,7 +22,6 @@ typedef struct {
     char flight_model[MAX_FLIGHT_MODEL];
     int passengers;
 } flight_type;
-
 typedef struct {
     char first_name[MAX_NAME];
     char last_name[MAX_NAME];
@@ -38,8 +37,6 @@ typedef struct {
         char sunday[MAX_WORKTIME];
     };
 } employee_type;
-
-/* prototypes */
 int count_lines(char *file);
 void scan_for_flight_data(char *file, int total_flights, flight_type *flights);
 void scan_for_employee_data(char *file, int total_employees, employee_type *employees);
@@ -47,11 +44,11 @@ flight_type read_flights(FILE *fp);
 employee_type read_employees(FILE *fp);
 void print_flights(int length, flight_type *flights);
 void print_employees(int length, employee_type *employees);
-void employees_in_time_intervals(int flight_length, int employees_length, flight_type *flights, employee_type *empolyees);
+void
+employees_in_time_intervals(int flight_length, int employees_length, flight_type *flights, employee_type *empolyees);
 int flights_in_interval(int length, char *interval, flight_type *flights, flight_type *flights_in_interval);
 int find_empolyees_in_shifts(int length, flight_type *flights, char *shift);
 double find_avg_passengers(int length, flight_type *flights);
-/* end of prototypes */
 
 int main(void)
 {
@@ -66,7 +63,7 @@ int main(void)
     
     //print_flights(total_flights, flights);
     //print_employees(total_employees, employees);
-
+    
     employees_in_time_intervals(total_flights, total_employees, flights, employees);
 }
 
