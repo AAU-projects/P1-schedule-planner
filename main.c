@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #define MAX_TRAVEL 4
 #define MAX_FLIGHT_NR 10
@@ -51,6 +52,7 @@ void employees_in_time_intervals(int total_flights, int employees_length, flight
 int flights_in_interval(int length, char *interval, flight_type *flights, flight_type *flights_in_interval);
 double find_empolyees_in_shifts(int length, flight_type *flights);
 double basic_employees_shift(int total_flights, flight_type *flights);
+void assign_day_worktime(int total_employees, employee_type *employees, char *day, int employees_morning, int employees_day, int employees_night);
 /* end of prototypes */
 
 int main(void)
@@ -68,6 +70,7 @@ int main(void)
     //print_employees(total_employees, employees);
     
     employees_in_time_intervals(total_flights, total_employees, flights, employees);
+    assign_day_worktime(total_employees, employees, "Fre", 11, 11, 11);
 }
 
 int count_lines(char *file)
@@ -180,7 +183,7 @@ void employees_in_time_intervals(int total_flights, int employees_length, flight
     day_employees = find_empolyees_in_shifts(total_day_flights, day_flights);
     night_employees = find_empolyees_in_shifts(total_night_flights, night_flights);
     
-    printf("%f %f %f",morning_employees, day_employees, night_employees);
+    //printf("%f %f %f",morning_employees, day_employees, night_employees);
 }
 
 int flights_in_interval(int length, char *interval, flight_type *flights, flight_type *flights_in_interval)
@@ -205,7 +208,7 @@ int flights_in_interval(int length, char *interval, flight_type *flights, flight
 double find_empolyees_in_shifts(int length, flight_type *flights)
 {
     double avg_passengers = basic_employees_shift(length, flights);
-    printf("basic: %lf\n",avg_passengers);
+    //printf("basic: %lf\n",avg_passengers);
     int flight_hour, flight_minute, flight_time, flight_hour_cmp, flight_minute_cmp, flight_time_cmp;
     int max_flights_hour_interval = 0, flights_hour_interval = 0;
     int time_flight_hour_interval, total_passengers, passengers;
@@ -245,7 +248,7 @@ double find_empolyees_in_shifts(int length, flight_type *flights)
         }
     }
 
-    printf("Max flights at %.4d - %.4d is %d with %d\n", time_flight_hour_interval, time_flight_hour_interval+HOUR_MILITARYTIME, max_flights_hour_interval, total_passengers);
+    //printf("Max flights at %.4d - %.4d is %d with %d\n", time_flight_hour_interval, time_flight_hour_interval+HOUR_MILITARYTIME, max_flights_hour_interval, total_passengers);
     //printf("%lf\n",avg_passengers);
     
     employees = total_passengers/max_flights_hour_interval/PASSENGERS_PER_EMPLOYEE*2+avg_passengers;
@@ -270,4 +273,14 @@ double basic_employees_shift(int total_flights, flight_type *flights)
     }
     
     return (avg_passengers/total_flights)/PASSENGERS_PER_EMPLOYEE;
+}
+
+void assign_day_worktime(int total_employees, employee_type *employees, char *day, int employees_morning, int employees_day, int employees_night)
+{
+    srand(time(NULL));
+    int r = rand()%total_employees;
+    
+    printf("%d",r);
+    
+    
 }
