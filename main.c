@@ -277,10 +277,22 @@ double basic_employees_shift(int total_flights, flight_type *flights)
 
 void assign_day_worktime(int total_employees, employee_type *employees, char *day, int employees_morning, int employees_day, int employees_night)
 {
+    int used_numbers[total_employees];
     srand(time(NULL));
-    int r = rand()%total_employees;
+    int random_employee;
     
-    printf("%d",r);
-    
+    for (int i = 0; i < employees_morning; ++i)
+    {
+        random_employee = rand()%total_employees;
+        used_numbers[i]=random_employee;
+        
+        if (is_used())
+        strcpy(employees[random_employee].worktime.friday,"04:00 - 12:00");
+        
+        printf("Employe %s worktime friday %s\n",employees[random_employee].last_name, employees[random_employee].worktime.friday);
+    }
+}
+int is_used(int number, int *array)
+{
     
 }
