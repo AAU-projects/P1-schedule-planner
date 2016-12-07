@@ -164,7 +164,7 @@ void print_employees(int length, employee_type *employees)
 
 void employees_in_time_intervals(int total_flights, int employees_length, flight_type *flights, employee_type *empolyees)
 {
-    char morning_shift[] = "04:00 - 12:00", day_shift[] = "11:30 - 19:30", night_shift[] = "19:00 - 01:00";
+    char morning_shift[] = "04:00 - 12:00", day_shift[] = "11:30 - 19:30", night_shift[] = "19:00 - 25:00";
     int total_morning_flights, total_day_flights, total_night_flights;
     double morning_employees, day_employees, night_employees;
     
@@ -205,6 +205,7 @@ int flights_in_interval(int length, char *interval, flight_type *flights, flight
 double find_empolyees_in_shifts(int length, flight_type *flights)
 {
     double avg_passengers = basic_employees_shift(length, flights);
+    printf("basic: %lf\n",avg_passengers);
     int flight_hour, flight_minute, flight_time, flight_hour_cmp, flight_minute_cmp, flight_time_cmp;
     int max_flights_hour_interval = 0, flights_hour_interval = 0;
     int time_flight_hour_interval, total_passengers, passengers;
@@ -217,7 +218,6 @@ double find_empolyees_in_shifts(int length, flight_type *flights)
         //printf("%d flights for %s at %s and 1 hour forward\n\n", flights_hour_interval, flights[i - 1].flight_model, flights[i - 1].time);
         if (max_flights_hour_interval < flights_hour_interval)
         {
-            //printf("Found new max %d\n\n", flights_hour_interval);
             max_flights_hour_interval = flights_hour_interval;
             time_flight_hour_interval = flight_time;
             total_passengers = passengers;
@@ -245,7 +245,7 @@ double find_empolyees_in_shifts(int length, flight_type *flights)
         }
     }
 
-    //printf("Max flights at %.4d - %.4d is %d with %d\n", time_flight_hour_interval, time_flight_hour_interval+HOUR_MILITARYTIME, max_flights_hour_interval, total_passengers);
+    printf("Max flights at %.4d - %.4d is %d with %d\n", time_flight_hour_interval, time_flight_hour_interval+HOUR_MILITARYTIME, max_flights_hour_interval, total_passengers);
     //printf("%lf\n",avg_passengers);
     
     employees = total_passengers/max_flights_hour_interval/PASSENGERS_PER_EMPLOYEE*2+avg_passengers;
