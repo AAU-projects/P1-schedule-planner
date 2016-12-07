@@ -44,8 +44,7 @@ flight_type read_flights(FILE *fp);
 employee_type read_employees(FILE *fp);
 void print_flights(int length, flight_type *flights);
 void print_employees(int length, employee_type *employees);
-void
-employees_in_time_intervals(int flight_length, int employees_length, flight_type *flights, employee_type *empolyees);
+void employees_in_time_intervals(int total_flights, int employees_length, flight_type *flights, employee_type *empolyees);
 int flights_in_interval(int length, char *interval, flight_type *flights, flight_type *flights_in_interval);
 int find_empolyees_in_shifts(int length, flight_type *flights, char *shift);
 double find_avg_passengers(int length, flight_type *flights);
@@ -159,20 +158,20 @@ void print_employees(int length, employee_type *employees)
     }
 }
 
-void employees_in_time_intervals(int flight_length, int employees_length, flight_type *flights, employee_type *empolyees)
+void employees_in_time_intervals(int total_flights, int employees_length, flight_type *flights, employee_type *empolyees)
 {
     char morning_shift[] = "04:00 - 12:00", day_shift[] = "11:30 - 19:30", night_shift[] = "19:00 - 01:00";
     int total_morning_flights, total_day_flights, total_night_flights;
     
-    flight_type morning_flights[flight_length];
-    flight_type day_flights[flight_length];
-    flight_type night_flights[flight_length];
+    flight_type morning_flights[total_flights];
+    flight_type day_flights[total_flights];
+    flight_type night_flights[total_flights];
     
-    total_morning_flights = flights_in_interval(flight_length, morning_shift, flights, morning_flights);
-    total_day_flights = flights_in_interval(flight_length, day_shift, flights, day_flights);
-    total_night_flights = flights_in_interval(flight_length, night_shift, flights, night_flights);
+    total_morning_flights = flights_in_interval(total_flights, morning_shift, flights, morning_flights);
+    total_day_flights = flights_in_interval(total_flights, day_shift, flights, day_flights);
+    total_night_flights = flights_in_interval(total_flights, night_shift, flights, night_flights);
     
-    find_empolyees_in_shifts(total_morning_flights, morning_flights, morning_shift);
+    find_empolyees_in_shifts(total_day_flights, day_flights, morning_shift);
     
     //print_flights(total_morning_flights, morning_flights);
     
@@ -200,14 +199,10 @@ int flights_in_interval(int length, char *interval, flight_type *flights, flight
 int find_empolyees_in_shifts(int length, flight_type *flights, char *shift)
 {
     double avg_passengers = find_avg_passengers(length, flights);
-    int start_hour, start_minute, start_time, end_hour, end_minute, end_time;
     int flight_hour, flight_minute, flight_time, flight_hour_cmp, flight_minute_cmp, flight_time_cmp;
     int max_flights_hour_interval = 0, flights_hour_interval = 0;
-
-    sscanf(shift," %d:%d - %d:%d",&start_hour, &start_minute, &end_hour, &end_minute);
-    start_time = start_hour * 100 + start_minute;
-    end_time = end_hour * 100 + end_minute;
-
+    int time_flight_hour_interval;
+    
 	//printf("start: %.4d end: %.4d\n", start_time, end_time);
 
     for (int i = 0; i < length ; ++i) 
@@ -217,6 +212,8 @@ int find_empolyees_in_shifts(int length, flight_type *flights, char *shift)
         {
             printf("Found new max %d\n\n", flights_hour_interval);
             max_flights_hour_interval = flights_hour_interval;
+            time_flight_hour_interval = flight_time;
+            
         }
         flights_hour_interval = 0;
         sscanf(flights[i].time, "%d:%d", &flight_hour, &flight_minute);
@@ -232,12 +229,13 @@ int find_empolyees_in_shifts(int length, flight_type *flights, char *shift)
             if (flight_time <= flight_time_cmp && (flight_time + HOUR_MILITARYTIME) >= flight_time_cmp)
             {
                 ++flights_hour_interval;
+                
                 printf("YES\n");
             }
         }
     }
 
-    printf("Max flights in a interval of one hour %d\n", max_flights_hour_interval);
+    printf("Max flights at %.4d - %.4d is %d\n", time_flight_hour_interval, time_flight_hour_interval+HOUR_MILITARYTIME, max_flights_hour_interval);
     printf("%lf\n",avg_passengers);
 }
 
