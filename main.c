@@ -13,6 +13,18 @@
 #define PASSENGERS_PER_EMPLOYEE 38
 #define HOUR_MILITARYTIME 100
 
+enum weekdays
+{
+    monday,
+    tuesday,
+    wednesday,
+    thursday,
+    friday,
+    saturday,
+    sunday,
+    week
+};
+
 typedef struct {
     char travel_type[MAX_TRAVEL];
     char flight_number[MAX_FLIGHT_NR];
@@ -57,7 +69,20 @@ void print_weekschedule(int total_employees, employee_type *employee);
 
 int main(void)
 {
-    char flight_file[] = "Flight_information.txt", employee_file[] = "Employees.txt";
+    int total_flights[week], employees;
+    char flight_files[week][41+1] = {"Flights/flight-05-12-2016-monday.txt","Flights/flight-05-12-2016-tuesday.txt",
+                                   "Flights/flight-05-12-2016-wednesday.txt","Flights/flight-05-12-2016-thursday.txt",
+                                   "Flights/flight-05-12-2016-friday.txt","Flights/flight-05-12-2016-saturday.txt",
+                                   "Flights/flight-05-12-2016-sunday.txt"};
+    char employee_file[] = "Employees.txt";
+    
+    
+    
+    
+    
+    
+    
+    
     int total_flights = count_lines(flight_file);
     int total_employees = count_lines(employee_file);
     flight_type flights[total_flights];
@@ -69,7 +94,14 @@ int main(void)
     //print_flights(total_flights, flights);
     //print_employees(total_employees, employees);
     
-    employees_in_time_intervals(total_flights, total_employees, flights, employees);
+    //employees_in_time_intervals(total_flights, total_employees, flights, employees);
+}
+void get_total_flights(int total_flights[week], char *flight_files)
+{
+    for (int i = 0; i < week; ++i)
+    {
+        total_flights[i] = count_lines(flight_files[i]);
+    }
 }
 
 int count_lines(char *file)
