@@ -53,6 +53,8 @@ int flights_in_interval(int length, char *interval, flight_type *flights, flight
 double find_empolyees_in_shifts(int length, flight_type *flights);
 double basic_employees_shift(int total_flights, flight_type *flights);
 void assign_day_worktime(int total_employees, employee_type *employees, char *day, int employees_morning, int employees_day, int employees_night);
+int is_used(int number, int *array, int length);
+
 /* end of prototypes */
 
 int main(void)
@@ -286,13 +288,22 @@ void assign_day_worktime(int total_employees, employee_type *employees, char *da
         random_employee = rand()%total_employees;
         used_numbers[i]=random_employee;
         
-        if (is_used())
-        strcpy(employees[random_employee].worktime.friday,"04:00 - 12:00");
-        
-        printf("Employe %s worktime friday %s\n",employees[random_employee].last_name, employees[random_employee].worktime.friday);
+        if (!is_used(random_employee,used_numbers,total_employees))
+        {
+            strcpy(employees[random_employee].worktime.friday,"04:00 - 12:00");
+    
+            printf("Employe %2s worktime friday %s\n",employees[random_employee].last_name, employees[random_employee].worktime.friday);
+        }
     }
 }
-int is_used(int number, int *array)
+int is_used(int number, int *array, int length)
 {
-    
+    for (int i = 0; i < length; ++i)
+    {
+        if (number == array[i])
+        {
+            return 1;
+        }
+    }
+    return 0;
 }
