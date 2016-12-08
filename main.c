@@ -362,6 +362,7 @@ void assign_worktime(int total_employees, employee_type *emplyees, double shift_
     for (int j = 0; j < week; ++j)
     {
         i = myRandom(total_employees);
+
         for (int k = 0; k < shift_employees[j][0]; ++k)
         {
             strcpy(emplyees[i].worktime[j],"04:00 - 12:00");
@@ -428,7 +429,7 @@ void print_weekschedule(int total_employees, employee_type *employee)
     printf("----------------------------------------------------------------------------------------------------------------------------------------| \n");
     for(int i = 0 ; i < total_employees ; i++)
     {
-        printf("%-10s %-12s | %13s | %13s | %13s | %13s | %13s | %13s | %13s |\n",
+        printf("%-10s %-12s | %13s | %13s | %13s | %13s | %13s | %13s | %13s | %d\n",
                employee[i].first_name,
                employee[i].last_name,
                employee[i].worktime[monday],
@@ -437,7 +438,7 @@ void print_weekschedule(int total_employees, employee_type *employee)
                employee[i].worktime[thursday],
                employee[i].worktime[friday],
                employee[i].worktime[saturday],
-               employee[i].worktime[sunday]);
+               employee[i].worktime[sunday], employee[i].hrs);
     }
     printf("\n");
 }
