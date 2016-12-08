@@ -62,6 +62,7 @@ void print_employees(int length, employee_type *employees);
 void employees_in_time_intervals(int total_flights, int employees_length, flight_type *flights, employee_type *empolyees);
 int flights_in_interval(int length, char *interval, flight_type *flights, flight_type *flights_in_interval);
 double find_empolyees_in_shifts(int length, flight_type *flights);
+double find_max_flights_hour_interval(int length, flight_type *flights);
 double basic_employees_shift(int total_flights, flight_type *flights);
 void print_weekschedule(int total_employees, employee_type *employee);
 /* end of prototypes */
@@ -235,16 +236,11 @@ int flights_in_interval(int length, char *interval, flight_type *flights, flight
     return j;
 }
 
-double find_empolyees_in_shifts(int length, flight_type *flights)
+double find_max_flights_hour_interval(int length, flight_type *flights)
 {
-    double basic_employees_pr_shift = basic_employees_shift(length, flights);
-    printf("basic: %lf\n",basic_employees_pr_shift);
     int flight_hour, flight_minute, flight_time, flight_hour_cmp, flight_minute_cmp, flight_time_cmp;
     int max_flights_hour_interval = 0, flights_hour_interval = 0;
     int time_flight_hour_interval, total_passengers_hour_interval, passengers;
-    double employees;
-    
-	//printf("start: %.4d end: %.4d\n", start_time, end_time);
 
     for (int i = 0; i < length ; ++i) 
     {
@@ -279,9 +275,20 @@ double find_empolyees_in_shifts(int length, flight_type *flights)
     }
 
     printf("Max flights at %.4d - %.4d is %d with %d\n", time_flight_hour_interval, time_flight_hour_interval+HOUR_MILITARYTIME, max_flights_hour_interval, total_passengers_hour_interval);
+    return (max_flights_hour_interval/2) + (total_passengers_hour_interval/PASSENGERS_PER_EMPLOYEE/8);
+}
+
+double find_empolyees_in_shifts(int length, flight_type *flights)
+{
+    double basic_employees_pr_shift = basic_employees_shift(length, flights);
+    double max_flights_hour_interval = find_max_flights_hour_interval(length, flights);
+    double employees;
+    
+    //printf("basic: %lf\n",basic_employees_pr_shift);
+	//printf("start: %.4d end: %.4d\n", start_time, end_time);
     //printf("%lf\n",basic_employees_pr_shift);
     
-    employees = (basic_employees_pr_shift) + (max_flights_hour_interval/2) + (total_passengers_hour_interval/PASSENGERS_PER_EMPLOYEE/8);
+    employees = (basic_employees_pr_shift) + (max_flights_hour_interval);
     
     return employees;
 }
