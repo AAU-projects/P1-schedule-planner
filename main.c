@@ -51,6 +51,7 @@ void employees_in_time_intervals(int total_flights, int employees_length, flight
 int flights_in_interval(int length, char *interval, flight_type *flights, flight_type *flights_in_interval);
 double find_empolyees_in_shifts(int length, flight_type *flights);
 double basic_employees_shift(int total_flights, flight_type *flights);
+void print_weekschedule(int total_employees, employee_type *employee);
 /* end of prototypes */
 
 int main(void)
@@ -63,7 +64,7 @@ int main(void)
     
     scan_for_flight_data(flight_file, total_flights, flights);
     scan_for_employee_data(employee_file, total_employees, employees);
-    
+    //print_weekschedule(total_employees, employees);
     //print_flights(total_flights, flights);
     //print_employees(total_employees, employees);
     
@@ -270,4 +271,17 @@ double basic_employees_shift(int total_flights, flight_type *flights)
     }
     
     return (avg_passengers/total_flights)/PASSENGERS_PER_EMPLOYEE;
+}
+
+void print_weekschedule(int total_employees, employee_type *employee)
+{
+    printf("\n");
+    printf("\t\t\t Monday \t Tuesday \t Wednesday \t Thursday \t Friday \t Saturday \t Sunday\n");
+    printf("--------------------------------------------------------------------------------------------------------------------------------\n");
+    for(int i = 0 ; i < total_employees ; i++)
+    {
+        printf("%s %3s, %3d | \t %s \t %s \t %s \t %s \t %s \t %s \t %s\n"
+                , employee[i].first_name, employee[i].last_name, employee[i].max_hrs, employee[i].worktime.monday, employee[i].worktime.tuesday, employee[i].worktime.wednesday, employee[i].worktime.thursday, employee[i].worktime.friday, employee[i].worktime.saturday, employee[i].worktime.sunday);
+    }
+    printf("\n");
 }
