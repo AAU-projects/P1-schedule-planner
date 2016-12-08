@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #define MAX_TRAVEL 4
 #define MAX_FLIGHT_NR 10
@@ -44,15 +45,7 @@ typedef struct {
     char last_name[MAX_NAME];
     int max_hrs;
     int hrs;
-    struct worktime {
-        char monday[MAX_WORKTIME];
-        char tuesday[MAX_WORKTIME];
-        char wednesday[MAX_WORKTIME];
-        char thursday[MAX_WORKTIME];
-        char friday[MAX_WORKTIME];
-        char saturday[MAX_WORKTIME];
-        char sunday[MAX_WORKTIME];
-    }worktime;
+    char worktime[week][MAX_WORKTIME];
 } employee_type;
 
 /* prototypes */
@@ -72,11 +65,14 @@ int flights_in_interval(int length, char *interval, flight_type *flights, flight
 double find_empolyees_in_shifts(int length, flight_type *flights);
 double find_max_flights_hour_interval(int length, flight_type *flights);
 double basic_employees_shift(int total_flights, flight_type *flights);
+void assign_worktime(int total_employees, employee_type *emplyees, double shift_employees[week][3]);
+int myRandom (int size);
 void print_weekschedule(int total_employees, employee_type *employee);
 /* end of prototypes */
 
 int main(void)
 {
+    srand (time(NULL));
     int total_flights[week], total_employees;
     double shift_employees[week][3];
     char flight_files[week][40] = {"Flights/flight-05-12-2016-monday.txt","Flights/flight-06-12-2016-tuesday.txt",
@@ -96,6 +92,11 @@ int main(void)
     scan_for_employee_data(employee_file, total_employees, employees);
 
     get_required_empolyees(total_flights, shift_employees, flights);
+
+    assign_worktime(total_employees, employees, shift_employees);
+
+    //print_employees(total_employees, employees);
+    print_weekschedule(total_employees, employees);
 }
 
 void get_total_flights(int total_flights[week], char flight_files[week][40])
@@ -208,10 +209,17 @@ void print_employees(int length, employee_type *employees)
 {
     for (int i = 0; i < length; ++i)
     {
-        printf("%s %s %d\n",
+        printf("%s %s %d %s %s %s %s %s %s %s\n",
                employees[i].first_name,
                employees[i].last_name,
-               employees[i].max_hrs);
+               employees[i].max_hrs,
+               employees[i].worktime[monday],
+               employees[i].worktime[tuesday],
+               employees[i].worktime[wednesday],
+               employees[i].worktime[thursday],
+               employees[i].worktime[friday],
+               employees[i].worktime[saturday],
+               employees[i].worktime[sunday]);
     }
 }
 
@@ -339,20 +347,97 @@ double basic_employees_shift(int total_flights, flight_type *flights)
     return (avg_passengers/total_flights)/PASSENGERS_PER_EMPLOYEE;
 }
 
-void assign_worktime()
+void assign_worktime(int total_employees, employee_type *emplyees, double shift_employees[week][3])
 {
+    int i;
+    for (int n = 0; n < total_employees; ++n)
+    {
+        emplyees[n].hrs = 0;
+        for (int j = 0; j < week; ++j)
+        {
+            strcpy(emplyees[n].worktime[j],"");
+        }
+    }
 
+    for (int j = 0; j < week; ++j)
+    {
+        i = myRandom(total_employees);
+        for (int k = 0; k < shift_employees[j][0]; ++k)
+        {
+            strcpy(emplyees[i].worktime[j],"04:00 - 12:00");
+            emplyees[i].hrs += 8;
+            i = myRandom (-1);
+        }
+        for (int l = 0; l < shift_employees[j][1]; ++l)
+        {
+            strcpy(emplyees[i].worktime[j],"11:30 - 19:30");
+            emplyees[i].hrs += 8;
+            i = myRandom (-1);
+        }
+        for (int m = 0; m < shift_employees[j][2]; ++m)
+        {
+            strcpy(emplyees[i].worktime[j],"19:00 - 01:00");
+            emplyees[i].hrs += 6;
+            i = myRandom (-1);
+        }
+    }
+}
+
+int myRandom (int size)
+{
+    int i, n;
+    static int numNums = 0;
+    static int *numArr = NULL;
+
+    // Initialize with a specific size.
+
+    if (size >= 0) {
+        if (numArr != NULL)
+            free (numArr);
+        if ((numArr = malloc (sizeof(int) * size)) == NULL)
+            return -2;
+        for (i = 0; i  < size; i++)
+            numArr[i] = i;
+        numNums = size;
+    }
+
+    // Error if no numbers left in pool.
+
+    if (numNums == 0)
+        return -1;
+
+    // Get random number from pool and remove it (rnd in this
+    //   case returns a number between 0 and numNums-1 inclusive).
+
+    n = rand() % numNums;
+    i = numArr[n];
+    numArr[n] = numArr[numNums-1];
+    numNums--;
+    if (numNums == 0) {
+        free (numArr);
+        numArr = 0;
+    }
+
+    return i;
 }
 
 void print_weekschedule(int total_employees, employee_type *employee)
 {
     printf("\n");
-    printf("\t\t\t Monday \t Tuesday \t Wednesday \t Thursday \t Friday \t Saturday \t Sunday\n");
-    printf("--------------------------------------------------------------------------------------------------------------------------------\n");
+    printf("Employee \t        |     Monday    |    Tuesday    |   Wednesday   |   Thursday    |    Friday     |   Saturday    |     Sunday    |\n");
+    printf("----------------------------------------------------------------------------------------------------------------------------------------| \n");
     for(int i = 0 ; i < total_employees ; i++)
     {
-        printf("%s %3s, %3d | \t %s \t %s \t %s \t %s \t %s \t %s \t %s\n"
-                , employee[i].first_name, employee[i].last_name, employee[i].max_hrs, employee[i].worktime.monday, employee[i].worktime.tuesday, employee[i].worktime.wednesday, employee[i].worktime.thursday, employee[i].worktime.friday, employee[i].worktime.saturday, employee[i].worktime.sunday);
+        printf("%-10s %-12s | %13s | %13s | %13s | %13s | %13s | %13s | %13s |\n",
+               employee[i].first_name,
+               employee[i].last_name,
+               employee[i].worktime[monday],
+               employee[i].worktime[tuesday],
+               employee[i].worktime[wednesday],
+               employee[i].worktime[thursday],
+               employee[i].worktime[friday],
+               employee[i].worktime[saturday],
+               employee[i].worktime[sunday]);
     }
     printf("\n");
 }
