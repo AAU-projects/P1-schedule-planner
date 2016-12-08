@@ -36,6 +36,10 @@ typedef struct {
 } flight_type;
 
 typedef struct {
+    flight_type flights[];
+} flight_array_type;
+
+typedef struct {
     char first_name[MAX_NAME];
     char last_name[MAX_NAME];
     int max_hrs;
@@ -52,6 +56,7 @@ typedef struct {
 } employee_type;
 
 /* prototypes */
+void get_total_flights(int total_flights[week], char flight_files[week][40]);
 int count_lines(char *file);
 void scan_for_flight_data(char *file, int total_flights, flight_type *flights);
 void scan_for_employee_data(char *file, int total_employees, employee_type *employees);
@@ -69,38 +74,42 @@ void print_weekschedule(int total_employees, employee_type *employee);
 
 int main(void)
 {
-    int total_flights[week], employees;
-    char flight_files[week][41+1] = {"Flights/flight-05-12-2016-monday.txt","Flights/flight-05-12-2016-tuesday.txt",
-                                   "Flights/flight-05-12-2016-wednesday.txt","Flights/flight-05-12-2016-thursday.txt",
-                                   "Flights/flight-05-12-2016-friday.txt","Flights/flight-05-12-2016-saturday.txt",
-                                   "Flights/flight-05-12-2016-sunday.txt"};
+    int total_flights[week], total_employees;
+    char flight_files[week][40] = {"Flights/flight-05-12-2016-monday.txt","Flights/flight-06-12-2016-tuesday.txt",
+                                   "Flights/flight-07-12-2016-wednesday.txt","Flights/flight-08-12-2016-thursday.txt",
+                                   "Flights/flight-09-12-2016-friday.txt","Flights/flight-10-12-2016-saturday.txt",
+                                   "Flights/flight-11-12-2016-sunday.txt"};
     char employee_file[] = "Employees.txt";
     
+    get_total_flights(total_flights,flight_files);
+    total_employees = count_lines(employee_file);
+    
+    flight_array_type flights[week];
+    
+    flights[monday].flights = ;
+    
+    scan_for_flight_data(flight_files[monday],total_flights[monday],flights[monday].flights);
     
     
     
+    //flight_type flights[total_flights];
+    //employee_type employees[total_employees];
     
-    
-    
-    
-    int total_flights = count_lines(flight_file);
-    int total_employees = count_lines(employee_file);
-    flight_type flights[total_flights];
-    employee_type employees[total_employees];
-    
-    scan_for_flight_data(flight_file, total_flights, flights);
-    scan_for_employee_data(employee_file, total_employees, employees);
+    //scan_for_flight_data(flight_file, total_flights, flights);
+    //scan_for_employee_data(employee_file, total_employees, employees);
     //print_weekschedule(total_employees, employees);
     //print_flights(total_flights, flights);
     //print_employees(total_employees, employees);
     
     //employees_in_time_intervals(total_flights, total_employees, flights, employees);
 }
-void get_total_flights(int total_flights[week], char *flight_files)
+
+void get_total_flights(int total_flights[week], char flight_files[week][40])
 {
     for (int i = 0; i < week; ++i)
     {
         total_flights[i] = count_lines(flight_files[i]);
+        printf("%d\n",total_flights[i]);
     }
 }
 
