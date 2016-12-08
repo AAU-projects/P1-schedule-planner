@@ -36,7 +36,7 @@ typedef struct {
 } flight_type;
 
 typedef struct {
-    flight_type flights[];
+    flight_type *flights;
 } flight_array_type;
 
 typedef struct {
@@ -58,13 +58,16 @@ typedef struct {
 /* prototypes */
 void get_total_flights(int total_flights[week], char flight_files[week][40]);
 int count_lines(char *file);
+void set_array_size(flight_array_type *flights, int total_flights[week]);
+void get_all_flights(char flight_files[week][40], int total_flights[week], flight_array_type *flights);
 void scan_for_flight_data(char *file, int total_flights, flight_type *flights);
 void scan_for_employee_data(char *file, int total_employees, employee_type *employees);
 flight_type read_flights(FILE *fp);
 employee_type read_employees(FILE *fp);
 void print_flights(int length, flight_type *flights);
 void print_employees(int length, employee_type *employees);
-void employees_in_time_intervals(int total_flights, int employees_length, flight_type *flights, employee_type *empolyees);
+void get_required_empolyees(int total_flights[week], double shift_employees[week][3], flight_array_type *flights);
+void employees_in_time_intervals(int total_flights, flight_type *flights, double *morning_employees, double *day_employees, double *night_employees);
 int flights_in_interval(int length, char *interval, flight_type *flights, flight_type *flights_in_interval);
 double find_empolyees_in_shifts(int length, flight_type *flights);
 double find_max_flights_hour_interval(int length, flight_type *flights);
@@ -75,6 +78,7 @@ void print_weekschedule(int total_employees, employee_type *employee);
 int main(void)
 {
     int total_flights[week], total_employees;
+    double shift_employees[week][3];
     char flight_files[week][40] = {"Flights/flight-05-12-2016-monday.txt","Flights/flight-06-12-2016-tuesday.txt",
                                    "Flights/flight-07-12-2016-wednesday.txt","Flights/flight-08-12-2016-thursday.txt",
                                    "Flights/flight-09-12-2016-friday.txt","Flights/flight-10-12-2016-saturday.txt",
@@ -85,23 +89,13 @@ int main(void)
     total_employees = count_lines(employee_file);
     
     flight_array_type flights[week];
-    
-    flights[monday].flights = ;
-    
-    scan_for_flight_data(flight_files[monday],total_flights[monday],flights[monday].flights);
-    
-    
-    
-    //flight_type flights[total_flights];
-    //employee_type employees[total_employees];
-    
-    //scan_for_flight_data(flight_file, total_flights, flights);
-    //scan_for_employee_data(employee_file, total_employees, employees);
-    //print_weekschedule(total_employees, employees);
-    //print_flights(total_flights, flights);
-    //print_employees(total_employees, employees);
-    
-    //employees_in_time_intervals(total_flights, total_employees, flights, employees);
+    set_array_size(flights, total_flights);
+    get_all_flights(flight_files, total_flights, flights);
+
+    employee_type employees[total_employees];
+    scan_for_employee_data(employee_file, total_employees, employees);
+
+    get_required_empolyees(total_flights, shift_employees, flights);
 }
 
 void get_total_flights(int total_flights[week], char flight_files[week][40])
@@ -129,6 +123,22 @@ int count_lines(char *file)
     fclose(fp);
     
     return counter;
+}
+
+void set_array_size(flight_array_type *flights, int total_flights[week])
+{
+    for (int i = 0; i < week; ++i)
+    {
+        flights[i].flights = (flight_type*)calloc(total_flights[i], sizeof(flight_type));
+    }
+}
+
+void get_all_flights(char flight_files[week][40], int total_flights[week], flight_array_type *flights)
+{
+    for (int i = 0; i < week; ++i)
+    {
+        scan_for_flight_data(flight_files[i],total_flights[i],flights[i].flights);
+    }
 }
 
 void scan_for_flight_data(char *file, int total_flights, flight_type *flights)
@@ -205,11 +215,19 @@ void print_employees(int length, employee_type *employees)
     }
 }
 
-void employees_in_time_intervals(int total_flights, int employees_length, flight_type *flights, employee_type *empolyees)
+void get_required_empolyees(int total_flights[week], double shift_employees[week][3], flight_array_type *flights)
+{
+    for (int i = 0; i < week; ++i)
+    {
+        printf("Day: %d\n",i+1);
+        employees_in_time_intervals(total_flights[i], flights[i].flights, &shift_employees[i][0], &shift_employees[i][1], &shift_employees[i][2]);
+    }
+}
+
+void employees_in_time_intervals(int total_flights, flight_type *flights, double *morning_employees, double *day_employees, double *night_employees)
 {
     char morning_shift[] = "04:00 - 12:00", day_shift[] = "11:30 - 19:30", night_shift[] = "19:00 - 25:00";
     int total_morning_flights, total_day_flights, total_night_flights;
-    double morning_employees, day_employees, night_employees;
     
     flight_type morning_flights[total_flights];
     flight_type day_flights[total_flights];
@@ -219,11 +237,11 @@ void employees_in_time_intervals(int total_flights, int employees_length, flight
     total_day_flights = flights_in_interval(total_flights, day_shift, flights, day_flights);
     total_night_flights = flights_in_interval(total_flights, night_shift, flights, night_flights);
     
-    morning_employees = find_empolyees_in_shifts(total_morning_flights, morning_flights);
-    day_employees = find_empolyees_in_shifts(total_day_flights, day_flights);
-    night_employees = find_empolyees_in_shifts(total_night_flights, night_flights);
+    *morning_employees = find_empolyees_in_shifts(total_morning_flights, morning_flights);
+    *day_employees = find_empolyees_in_shifts(total_day_flights, day_flights);
+    *night_employees = find_empolyees_in_shifts(total_night_flights, night_flights);
     
-    printf("%f %f %f",morning_employees, day_employees, night_employees);
+    printf("%f %f %f\n\n\n",*morning_employees, *day_employees, *night_employees);
 }
 
 int flights_in_interval(int length, char *interval, flight_type *flights, flight_type *flights_in_interval)
@@ -319,6 +337,11 @@ double basic_employees_shift(int total_flights, flight_type *flights)
     }
     
     return (avg_passengers/total_flights)/PASSENGERS_PER_EMPLOYEE;
+}
+
+void assign_worktime()
+{
+
 }
 
 void print_weekschedule(int total_employees, employee_type *employee)
