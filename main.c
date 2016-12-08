@@ -51,6 +51,7 @@ void employees_in_time_intervals(int total_flights, int employees_length, flight
 int flights_in_interval(int length, char *interval, flight_type *flights, flight_type *flights_in_interval);
 double find_empolyees_in_shifts(int length, flight_type *flights);
 double basic_employees_shift(int total_flights, flight_type *flights);
+void print_weekschedule(int total_employees, employee_type *employee);
 /* end of prototypes */
 
 int main(void)
@@ -63,7 +64,7 @@ int main(void)
     
     scan_for_flight_data(flight_file, total_flights, flights);
     scan_for_employee_data(employee_file, total_employees, employees);
-    
+    //print_weekschedule(total_employees, employees);
     //print_flights(total_flights, flights);
     //print_employees(total_employees, employees);
     
@@ -204,11 +205,11 @@ int flights_in_interval(int length, char *interval, flight_type *flights, flight
 
 double find_empolyees_in_shifts(int length, flight_type *flights)
 {
-    double avg_passengers = basic_employees_shift(length, flights);
-    printf("basic: %lf\n",avg_passengers);
+    double basic_employees_pr_shift = basic_employees_shift(length, flights);
+    printf("basic: %lf\n",basic_employees_pr_shift);
     int flight_hour, flight_minute, flight_time, flight_hour_cmp, flight_minute_cmp, flight_time_cmp;
     int max_flights_hour_interval = 0, flights_hour_interval = 0;
-    int time_flight_hour_interval, total_passengers, passengers;
+    int time_flight_hour_interval, total_passengers_hour_interval, passengers;
     double employees;
     
 	//printf("start: %.4d end: %.4d\n", start_time, end_time);
@@ -220,7 +221,7 @@ double find_empolyees_in_shifts(int length, flight_type *flights)
         {
             max_flights_hour_interval = flights_hour_interval;
             time_flight_hour_interval = flight_time;
-            total_passengers = passengers;
+            total_passengers_hour_interval = passengers;
         
         }
         flights_hour_interval = 0;
@@ -245,10 +246,10 @@ double find_empolyees_in_shifts(int length, flight_type *flights)
         }
     }
 
-    printf("Max flights at %.4d - %.4d is %d with %d\n", time_flight_hour_interval, time_flight_hour_interval+HOUR_MILITARYTIME, max_flights_hour_interval, total_passengers);
-    //printf("%lf\n",avg_passengers);
+    printf("Max flights at %.4d - %.4d is %d with %d\n", time_flight_hour_interval, time_flight_hour_interval+HOUR_MILITARYTIME, max_flights_hour_interval, total_passengers_hour_interval);
+    //printf("%lf\n",basic_employees_pr_shift);
     
-    employees = total_passengers/max_flights_hour_interval/PASSENGERS_PER_EMPLOYEE*2+avg_passengers;
+    employees = (basic_employees_pr_shift) + (max_flights_hour_interval/2) + (total_passengers_hour_interval/PASSENGERS_PER_EMPLOYEE/8);
     
     return employees;
 }
@@ -270,4 +271,17 @@ double basic_employees_shift(int total_flights, flight_type *flights)
     }
     
     return (avg_passengers/total_flights)/PASSENGERS_PER_EMPLOYEE;
+}
+
+void print_weekschedule(int total_employees, employee_type *employee)
+{
+    printf("\n");
+    printf("\t\t\t Monday \t Tuesday \t Wednesday \t Thursday \t Friday \t Saturday \t Sunday\n");
+    printf("--------------------------------------------------------------------------------------------------------------------------------\n");
+    for(int i = 0 ; i < total_employees ; i++)
+    {
+        printf("%s %3s, %3d | \t %s \t %s \t %s \t %s \t %s \t %s \t %s\n"
+                , employee[i].first_name, employee[i].last_name, employee[i].max_hrs, employee[i].worktime.monday, employee[i].worktime.tuesday, employee[i].worktime.wednesday, employee[i].worktime.thursday, employee[i].worktime.friday, employee[i].worktime.saturday, employee[i].worktime.sunday);
+    }
+    printf("\n");
 }
