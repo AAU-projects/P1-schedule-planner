@@ -335,7 +335,7 @@ double find_empolyees_in_shifts(int length, flight_type *flights)
 	//printf("start: %.4d end: %.4d\n", start_time, end_time);
     //printf("%lf\n",basic_employees_pr_shift);
     
-    employees = 5 //(basic_employees_pr_shift) + (max_flights_hour_interval);
+    employees = 5; //(basic_employees_pr_shift) + (max_flights_hour_interval);
     
     return employees;
 }
@@ -400,7 +400,7 @@ int get_new_number(employee_type *employees, int j)
 {
     int i = myRandom(-1);
     
-    if (employees[i].hrs > employees[i].max_hrs-6)
+    if (employees[i].hrs > employees[i].max_hrs-8)
     {
         do {
             i = myRandom(-1);
@@ -473,7 +473,7 @@ void print_weekschedule(int total_employees, employee_type *employee)
     printf("----------------------------------------------------------------------------------------------------------------------------------------| \n");
     for(int i = 0 ; i < total_employees ; i++)
     {
-        printf("%-10s %-12s | %13s | %13s | %13s | %13s | %13s | %13s | %13s |\n",
+        printf("%-10s %-12s | %13s | %13s | %13s | %13s | %13s | %13s | %13s | %d\n",
                employee[i].first_name,
                employee[i].last_name,
                employee[i].worktime[monday],
@@ -482,7 +482,8 @@ void print_weekschedule(int total_employees, employee_type *employee)
                employee[i].worktime[thursday],
                employee[i].worktime[friday],
                employee[i].worktime[saturday],
-               employee[i].worktime[sunday]);
+               employee[i].worktime[sunday],
+               employee[i].hrs);
     }
     printf("\n");
 }
