@@ -335,7 +335,7 @@ double find_empolyees_in_shifts(int length, flight_type *flights)
 	//printf("start: %.4d end: %.4d\n", start_time, end_time);
     //printf("%lf\n",basic_employees_pr_shift);
     
-    employees = (basic_employees_pr_shift) + (max_flights_hour_interval);
+    employees = 5 //(basic_employees_pr_shift) + (max_flights_hour_interval);
     
     return employees;
 }
