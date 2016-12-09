@@ -335,7 +335,7 @@ double find_empolyees_in_shifts(int length, flight_type *flights)
 	//printf("start: %.4d end: %.4d\n", start_time, end_time);
     //printf("%lf\n",basic_employees_pr_shift);
     
-    employees = 5; //(basic_employees_pr_shift) + (max_flights_hour_interval);
+    employees = 6; //(basic_employees_pr_shift) + (max_flights_hour_interval);
     
     return employees;
 }
@@ -362,10 +362,10 @@ double basic_employees_shift(int total_flights, flight_type *flights)
 void assign_worktime(int total_employees, employee_type *emplyees, double shift_employees[week][3])
 {
     int i;
-    for (int n = 0; n < total_employees; ++n)
+    for (int n = 0; n < total_employees; n++)
     {
         emplyees[n].hrs = 0;
-        for (int j = 0; j < week; ++j)
+        for (int j = 0; j < week; j++)
         {
             strcpy(emplyees[n].worktime[j],"");
         }
@@ -379,18 +379,21 @@ void assign_worktime(int total_employees, employee_type *emplyees, double shift_
             strcpy(emplyees[i].worktime[j],"04:00 - 12:00");
             emplyees[i].hrs += 8;
             i = get_new_number(emplyees,j);
+            printf("%s has %d hours left \n", emplyees[i].first_name, emplyees[i].hrs);
         }
         for (int l = 0; l < shift_employees[j][1]; ++l)
         {
             strcpy(emplyees[i].worktime[j],"11:30 - 19:30");
             emplyees[i].hrs += 8;
-            i = get_new_number(emplyees,j);;
+            i = get_new_number(emplyees,j);
+            printf("%s has %d hours left \n", emplyees[i].first_name, emplyees[i].hrs);
         }
         for (int m = 0; m < shift_employees[j][2]; ++m)
         {
             strcpy(emplyees[i].worktime[j],"19:00 - 01:00");
             emplyees[i].hrs += 6;
             i = get_new_number(emplyees,j);
+            printf("%s has %d hours left \n", emplyees[i].first_name, emplyees[i].hrs);
         }
         myRandom(-2);
     }
@@ -410,6 +413,7 @@ int get_new_number(employee_type *employees, int j)
                 if (i == -1)
                 {
                     printf("No more available employees\n");
+                    print_weekschedule(32, employees);
                 } else
                 {
                     printf("No more memory\n");
