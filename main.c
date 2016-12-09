@@ -52,6 +52,7 @@ typedef struct {
 void get_total_flights(int total_flights[week], char flight_files[week][40]);
 int count_lines(char *file);
 void set_array_size(flight_array_type *flights, int total_flights[week]);
+void free_array(flight_array_type *flights, int total_flights[week]);
 void get_all_flights(char flight_files[week][40], int total_flights[week], flight_array_type *flights);
 void scan_for_flight_data(char *file, int total_flights, flight_type *flights);
 void scan_for_employee_data(char *file, int total_employees, employee_type *employees);
@@ -66,6 +67,7 @@ double find_empolyees_in_shifts(int length, flight_type *flights);
 double find_max_flights_hour_interval(int length, flight_type *flights);
 double basic_employees_shift(int total_flights, flight_type *flights);
 void assign_worktime(int total_employees, employee_type *emplyees, double shift_employees[week][3]);
+int get_new_number(employee_type *employees);
 int myRandom (int size);
 void print_weekschedule(int total_employees, employee_type *employee);
 /* end of prototypes */
@@ -97,6 +99,8 @@ int main(void)
 
     //print_employees(total_employees, employees);
     print_weekschedule(total_employees, employees);
+    
+    free_array(flights, total_flights);
 }
 
 void get_total_flights(int total_flights[week], char flight_files[week][40])
@@ -131,6 +135,14 @@ void set_array_size(flight_array_type *flights, int total_flights[week])
     for (int i = 0; i < week; ++i)
     {
         flights[i].flights = (flight_type*)calloc(total_flights[i], sizeof(flight_type));
+    }
+}
+
+void free_array(flight_array_type *flights, int total_flights[week])
+{
+    for (int i = 0; i < week; ++i)
+    {
+        free(flights[i].flights);
     }
 }
 
@@ -366,21 +378,40 @@ void assign_worktime(int total_employees, employee_type *emplyees, double shift_
         {
             strcpy(emplyees[i].worktime[j],"04:00 - 12:00");
             emplyees[i].hrs += 8;
-            i = myRandom (-1);
+            i = get_new_number(emplyees);
         }
         for (int l = 0; l < shift_employees[j][1]; ++l)
         {
             strcpy(emplyees[i].worktime[j],"11:30 - 19:30");
             emplyees[i].hrs += 8;
-            i = myRandom (-1);
+            i = get_new_number(emplyees);;
         }
         for (int m = 0; m < shift_employees[j][2]; ++m)
         {
             strcpy(emplyees[i].worktime[j],"19:00 - 01:00");
             emplyees[i].hrs += 6;
-            i = myRandom (-1);
+            i = get_new_number(emplyees);
         }
+        myRandom(-2);
     }
+}
+
+int get_new_number(employee_type *employees)
+{
+    int i = myRandom(-1);
+    
+    if (employees[i].hrs > employees[i].max_hrs-8)
+    {
+        do {
+            i = myRandom(-1);
+            if (i == -1 || i == -2)
+            {
+                printf("error: %d",i);
+                exit(-1);
+            }
+        } while (employees[i].hrs > employees[i].max_hrs-8);
+    }
+    return i;
 }
 
 int myRandom (int size)
@@ -390,7 +421,14 @@ int myRandom (int size)
     static int *numArr = NULL;
 
     // Initialize with a specific size.
-
+    
+    if (size == -2)
+    {
+        free(numArr);
+        numNums = 0;
+        return -3;
+    }
+    
     if (size >= 0) {
         if (numArr != NULL)
             free (numArr);
