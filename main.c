@@ -67,11 +67,8 @@ double find_empolyees_in_shifts(int length, flight_type *flights);
 double find_max_flights_hour_interval(int length, flight_type *flights);
 double basic_employees_shift(int total_flights, flight_type *flights);
 void assign_worktime(int total_employees, employee_type *emplyees, double shift_employees[week][3]);
-int get_empoyee(employee_type *employees, int total_employees);
 int sort_by_hrs(const void *a, const void *b);
 int sort_by_name(const void *a, const void *b);
-int get_new_number(employee_type *employees, int j);
-int myRandom (int size);
 void print_weekschedule(int total_employees, employee_type *employee);
 /* end of prototypes */
 
@@ -364,7 +361,6 @@ double basic_employees_shift(int total_flights, flight_type *flights)
 
 void assign_worktime(int total_employees, employee_type *emplyees, double shift_employees[week][3])
 {
-    int i;
     for (int n = 0; n < total_employees; n++)
     {
         emplyees[n].hrs = 0;
@@ -376,7 +372,6 @@ void assign_worktime(int total_employees, employee_type *emplyees, double shift_
 
     for (int j = 0; j < week; ++j)
     {
-        //i = myRandom(total_employees);
         for (int k = 0; k < shift_employees[j][0]; ++k)
         {
             strcpy(emplyees[0].worktime[j],"04:00 - 12:00");
@@ -398,17 +393,8 @@ void assign_worktime(int total_employees, employee_type *emplyees, double shift_
             qsort(emplyees,total_employees, sizeof(employee_type),sort_by_hrs);
             printf("%s has %d hours left \n", emplyees[0].first_name, emplyees[0].hrs);
         }
-        //myRandom(-2);
     }
     qsort(emplyees,total_employees, sizeof(employee_type),sort_by_name);
-}
-
-int get_empoyee(employee_type *employees, int total_employees)
-{
-    qsort(employees,total_employees, sizeof(employee_type),sort_by_hrs);
-
-
-
 }
 
 int sort_by_hrs(const void *a, const void *b)
@@ -431,77 +417,6 @@ int sort_by_name(const void *a, const void *b)
     employee_type *pb = (employee_type*)b;
 
     return (strcmp(pa->first_name, pb->first_name));
-}
-
-int get_new_number(employee_type *employees, int j)
-{
-    int i = myRandom(-1);
-    
-    if (employees[i].hrs > employees[i].max_hrs-8)
-    {
-        do {
-            i = myRandom(-1);
-            if (i == -1 || i == -2)
-            {
-                printf("error: %d j = %d\n",i,j);
-                if (i == -1)
-                {
-                    printf("No more available employees\n");
-                    print_weekschedule(32, employees);
-                } else
-                {
-                    printf("No more memory\n");
-                }
-                exit(-1);
-            }
-        } while (employees[i].hrs > employees[i].max_hrs-8);
-    }
-    return i;
-}
-
-int myRandom (int size)
-{
-    int i, n;
-    static int numNums = 0;
-    static int *numArr = NULL;
-
-    // Initialize with a specific size.
-    
-    if (size == -2)
-    {
-        free(numArr);
-        numNums = 0;
-        return -3;
-    }
-    
-    if (size >= 0) {
-        if (numArr != NULL)
-            free (numArr);
-        if ((numArr = malloc (sizeof(int) * size)) == NULL)
-            return -2;
-        for (i = 0; i  < size; i++)
-            numArr[i] = i;
-        numNums = size;
-    }
-
-    // Error if no numbers left in pool.
-
-    if (numNums == 0)
-        return -1;
-
-    // Get random number from pool and remove it (rnd in this
-    //   case returns a number between 0 and numNums-1 inclusive).
-
-    n = rand() % numNums;
-    i = numArr[n];
-    numArr[n] = numArr[numNums-1];
-    numNums--;
-    if (numNums == 0) {
-        free (numArr);
-        numArr = 0;
-    }
-
-    return i;
 }
 
 void print_weekschedule(int total_employees, employee_type *employee)
