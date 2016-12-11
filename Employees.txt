@@ -1,7 +1,7 @@
 Klaus       Albertsen       37
 Ernst       Soerensen       37
 Ib          Svendsen        37
-Georg       oester          37
+Georg       Oester          37
 Carl        Kaspersen       37
 Gustav      Guldbrandsen    37
 Joergen     Carlsen         37

@@ -99,7 +99,7 @@ int main(void)
 
     //print_employees(total_employees, employees);
     print_weekschedule(total_employees, employees);
-    
+
     free_array(flights, total_flights);
 }
 
