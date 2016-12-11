@@ -67,6 +67,9 @@ double find_empolyees_in_shifts(int length, flight_type *flights);
 double find_max_flights_hour_interval(int length, flight_type *flights);
 double basic_employees_shift(int total_flights, flight_type *flights);
 void assign_worktime(int total_employees, employee_type *emplyees, double shift_employees[week][3]);
+int get_empoyee(employee_type *employees, int total_employees);
+int sort_by_hrs(const void *a, const void *b);
+int sort_by_name(const void *a, const void *b);
 int get_new_number(employee_type *employees, int j);
 int myRandom (int size);
 void print_weekschedule(int total_employees, employee_type *employee);
@@ -373,30 +376,61 @@ void assign_worktime(int total_employees, employee_type *emplyees, double shift_
 
     for (int j = 0; j < week; ++j)
     {
-        i = myRandom(total_employees);
+        //i = myRandom(total_employees);
         for (int k = 0; k < shift_employees[j][0]; ++k)
         {
-            strcpy(emplyees[i].worktime[j],"04:00 - 12:00");
-            emplyees[i].hrs += 8;
-            i = get_new_number(emplyees,j);
-            printf("%s has %d hours left \n", emplyees[i].first_name, emplyees[i].hrs);
+            strcpy(emplyees[0].worktime[j],"04:00 - 12:00");
+            emplyees[0].hrs += 8;
+            qsort(emplyees,total_employees, sizeof(employee_type),sort_by_hrs);
+            printf("%s has %d hours left \n", emplyees[0].first_name, emplyees[0].hrs);
         }
         for (int l = 0; l < shift_employees[j][1]; ++l)
         {
-            strcpy(emplyees[i].worktime[j],"11:30 - 19:30");
-            emplyees[i].hrs += 8;
-            i = get_new_number(emplyees,j);
-            printf("%s has %d hours left \n", emplyees[i].first_name, emplyees[i].hrs);
+            strcpy(emplyees[0].worktime[j],"11:30 - 19:30");
+            emplyees[0].hrs += 8;
+            qsort(emplyees,total_employees, sizeof(employee_type),sort_by_hrs);
+            printf("%s has %d hours left \n", emplyees[0].first_name, emplyees[0].hrs);
         }
         for (int m = 0; m < shift_employees[j][2]; ++m)
         {
-            strcpy(emplyees[i].worktime[j],"19:00 - 01:00");
-            emplyees[i].hrs += 6;
-            i = get_new_number(emplyees,j);
-            printf("%s has %d hours left \n", emplyees[i].first_name, emplyees[i].hrs);
+            strcpy(emplyees[0].worktime[j],"19:00 - 01:00");
+            emplyees[0].hrs += 6;
+            qsort(emplyees,total_employees, sizeof(employee_type),sort_by_hrs);
+            printf("%s has %d hours left \n", emplyees[0].first_name, emplyees[0].hrs);
         }
-        myRandom(-2);
+        //myRandom(-2);
     }
+    qsort(emplyees,total_employees, sizeof(employee_type),sort_by_name);
+}
+
+int get_empoyee(employee_type *employees, int total_employees)
+{
+    qsort(employees,total_employees, sizeof(employee_type),sort_by_hrs);
+
+
+
+}
+
+int sort_by_hrs(const void *a, const void *b)
+{
+    employee_type *pa = (employee_type*)a;
+    employee_type *pb = (employee_type*)b;
+
+    if(pa->hrs == pb->hrs)
+    {
+        int c = rand()%10;
+        return (c > 5? -1:1);
+    }
+
+    return (pa->hrs - pb->hrs);
+}
+
+int sort_by_name(const void *a, const void *b)
+{
+    employee_type *pa = (employee_type*)a;
+    employee_type *pb = (employee_type*)b;
+
+    return (strcmp(pa->first_name, pb->first_name));
 }
 
 int get_new_number(employee_type *employees, int j)
