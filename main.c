@@ -37,7 +37,8 @@ typedef struct {
 } flight_type;
 
 typedef struct {
-    flight_type *flights;      
+    flight_type *flights;
+} flight_array_type; 
 
 typedef struct {
     char first_name[MAX_NAME];
