@@ -13,8 +13,8 @@
 #define MAX_WORKTIME 14
 #define PASSENGERS_PER_EMPLOYEE 38
 #define HOUR_MILITARYTIME 100
-
-enum weekdays
+ 
+enum weekdays 
 {
     monday,
     tuesday,
@@ -37,8 +37,7 @@ typedef struct {
 } flight_type;
 
 typedef struct {
-    flight_type *flights;
-} flight_array_type;
+    flight_type *flights;      
 
 typedef struct {
     char first_name[MAX_NAME];
@@ -80,10 +79,10 @@ int main(void)
     char flight_files[week][40] = {"Flights/flight-05-12-2016-monday.txt","Flights/flight-06-12-2016-tuesday.txt",
                                    "Flights/flight-07-12-2016-wednesday.txt","Flights/flight-08-12-2016-thursday.txt",
                                    "Flights/flight-09-12-2016-friday.txt","Flights/flight-10-12-2016-saturday.txt",
-                                   "Flights/flight-11-12-2016-sunday.txt"};
+                                   "Flights/flight-11-12-2016-sunday.txt"}; 
     char employee_file[] = "Employees.txt";
     
-    get_total_flights(total_flights,flight_files);
+    get_total_flights(total_flights,flight_files); 
     total_employees = count_lines(employee_file);
     
     flight_array_type flights[week];
@@ -103,6 +102,13 @@ int main(void)
     free_array(flights, total_flights);
 }
 
+/*
+ *Description: Puts the total amount of flights in a period of a day and puts it over to an array with the use of the Count_lines function. 
+ *Input: Array with various weekdays including weekday files. 
+ *Output: Number of lines in the various weekdays. 
+ */ 
+
+
 void get_total_flights(int total_flights[week], char flight_files[week][40])
 {
     for (int i = 0; i < week; ++i)
@@ -112,6 +118,12 @@ void get_total_flights(int total_flights[week], char flight_files[week][40])
     }
 }
 
+
+/*
+ * Description: Counts the number of lines in the file until it reaches End of File. 
+ * Input: File with text. 
+ * Returns: The number of lines. 
+ */ 
 int count_lines(char *file)
 {
     FILE *fp = fopen(file, "r");
@@ -129,7 +141,9 @@ int count_lines(char *file)
     
     return counter;
 }
-
+/*
+ *Description: Alokere plads til array af struct flight_array_type  
+ */ 
 void set_array_size(flight_array_type *flights, int total_flights[week])
 {
     for (int i = 0; i < week; ++i)
@@ -137,7 +151,12 @@ void set_array_size(flight_array_type *flights, int total_flights[week])
         flights[i].flights = (flight_type*)calloc(total_flights[i], sizeof(flight_type));
     }
 }
-
+  
+/*
+ * Description:
+ * Input:
+ * Output: 
+ */  
 void free_array(flight_array_type *flights, int total_flights[week])
 {
     for (int i = 0; i < week; ++i)
@@ -146,6 +165,11 @@ void free_array(flight_array_type *flights, int total_flights[week])
     }
 }
 
+/*
+ * Description: Scans data for weekdays 
+ * Input: File, number of flights in the weekday, and the array where the data can be stored. 
+ * Output: Array with flight data
+ */    
 void get_all_flights(char flight_files[week][40], int total_flights[week], flight_array_type *flights)
 {
     for (int i = 0; i < week; ++i)
@@ -154,6 +178,11 @@ void get_all_flights(char flight_files[week][40], int total_flights[week], fligh
     }
 }
 
+/*
+ * Description: Scans every line in the file.
+ * Input: File, number of flights, and the array where the data can be stored.
+ * Output: Array with flight data
+ */    
 void scan_for_flight_data(char *file, int total_flights, flight_type *flights)
 {
     FILE *fp = fopen(file, "r");
@@ -164,7 +193,12 @@ void scan_for_flight_data(char *file, int total_flights, flight_type *flights)
     }
     fclose(fp);
 }
-
+  
+/*
+ * Description: Scans for the data of the number of employees available 
+ * Input: File, number of employees, employee array
+ * Output: employee array with data
+*/  
 void scan_for_employee_data(char *file, int total_employees, employee_type *employees)
 {
     FILE *fp = fopen(file, "r");
@@ -176,6 +210,12 @@ void scan_for_employee_data(char *file, int total_employees, employee_type *empl
     fclose(fp);
 }
 
+/*
+ * Description: Stores the various data in the struct Flight_type.  
+ * Input: File. 
+ * Returns: Flight data from line.
+*/    
+  
 flight_type read_flights(FILE *fp)
 {
     flight_type flight;
@@ -244,6 +284,11 @@ void get_required_empolyees(int total_flights[week], double shift_employees[week
     }
 }
 
+/*
+ * Description: Calculates the number of employees needed for the different shifts.  
+ * Input:
+ * Output: 
+ */  
 void employees_in_time_intervals(int total_flights, flight_type *flights, double *morning_employees, double *day_employees, double *night_employees)
 {
     char morning_shift[] = "04:00 - 12:00", day_shift[] = "11:30 - 19:30", night_shift[] = "19:00 - 25:00";
@@ -263,7 +308,12 @@ void employees_in_time_intervals(int total_flights, flight_type *flights, double
     
     printf("%f %f %f\n\n\n",*morning_employees, *day_employees, *night_employees);
 }
-
+  
+/*
+ * Description: Calculates the number of flights in the shift interval.  
+ * Input: 
+ * Output: Array with the flights in the the shift interval
+ */ 
 int flights_in_interval(int total_flights, char *interval, flight_type *flights, flight_type *flights_in_interval)
 {
     char interval_start[MAX_TIME], interval_end[MAX_TIME];
@@ -279,10 +329,14 @@ int flights_in_interval(int total_flights, char *interval, flight_type *flights,
         }
     }
     
-    
     return j;
 }
-
+  
+/*
+ * Description: Calculates the number of employees   
+ * Input:
+ * Returns: Number of employees needed
+ */ 
 double find_employees_in_shifts(int total_flights_in_shift, flight_type *flights_in_shift)
 {
     double basic_employees_pr_shift = basic_employees_shift(total_flights_in_shift, flights_in_shift);
@@ -290,14 +344,19 @@ double find_employees_in_shifts(int total_flights_in_shift, flight_type *flights
     double employees;
     
     printf("basic: %lf\n",basic_employees_pr_shift);
-	//printf("start: %.4d end: %.4d\n", start_time, end_time);
+    //printf("start: %.4d end: %.4d\n", start_time, end_time);
     //printf("%lf\n",basic_employees_pr_shift);
     
     employees = (basic_employees_pr_shift) + (employees_in_hour_interval);
     
     return employees;
 }
-
+  
+/*
+ * Description: Calculates the number of employees needed in a period with most flights in any given shift
+ * Input:
+ * Returns: Convertion of data which is number of needed employees
+ */ 
 double find_max_flights_hour_interval(int total_flight_in_shift, flight_type *flights)
 {
     int flight_hour, flight_minute, flight_time, flight_hour_cmp, flight_minute_cmp, flight_time_cmp;
@@ -337,9 +396,14 @@ double find_max_flights_hour_interval(int total_flight_in_shift, flight_type *fl
     }
     
     printf("Max flights at %.4d - %.4d is %d with %d\n", time_flight_hour_interval, time_flight_hour_interval+HOUR_MILITARYTIME, max_flights_hour_interval, total_passengers_hour_interval);
-    return (max_flights_hour_interval/2) + (total_passengers_hour_interval/PASSENGERS_PER_EMPLOYEE/8);
+    return (max_flights_hour_interval/2) + (total_passengers_hour_interval/310);
 }
 
+/*
+ * Description: Calculates the number of employees needed to handle the total passengers in the shift.  
+ * Input: 
+ * Returns: Convertion to number of needed employees
+ */ 
 double basic_employees_shift(int total_flights, flight_type *flights)
 {
     double avg_passengers = 0;
@@ -359,6 +423,11 @@ double basic_employees_shift(int total_flights, flight_type *flights)
     return (avg_passengers/total_flights)/PASSENGERS_PER_EMPLOYEE;
 }
 
+/*
+ * Description: Assigning worktime to all employeees for all days any shifts 
+ * Input:
+ * Output: 
+ */ 
 void assign_worktime(int total_employees, employee_type *emplyees, double shift_employees[week][3])
 {
     for (int n = 0; n < total_employees; n++)
