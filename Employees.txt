@@ -21,12 +21,3 @@ Holger      Oestergaard     37
 Torbjørn    Matthiasen      37
 Samuel      Eriksen         37
 Jens        Antonsen        37
-Malthe      Jokumsen        37
-Adrian      Øster           37
-Peter       Brams           37
-Philip      Norup           37
-Viktor      Stenger         37
-Paul        Poulsen         37
-Bo          Giese           37
-Thorvald    Falk            37
-Mikael      Kaspersen       37
