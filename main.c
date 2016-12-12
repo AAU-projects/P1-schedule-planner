@@ -376,24 +376,36 @@ void assign_worktime(int total_employees, employee_type *emplyees, double shift_
         
         for (int k = 0; k < shift_employees[j][0]; ++k)
         {
+            if (emplyees[0].hrs <= (emplyees[0].max_hrs - 6))
+            {
             strcpy(emplyees[0].worktime[j],"04:00 - 12:00");
             emplyees[0].hrs += 8;
             qsort(emplyees,total_employees, sizeof(employee_type),sort_by_hrs);
             printf("%s has %d hours left \n", emplyees[0].first_name, emplyees[0].hrs);
+            } else
+                printf("NO MORE EMPLOYEES\n");
         }
         for (int l = 0; l < shift_employees[j][1]; ++l)
         {
+            if (emplyees[0].hrs <= (emplyees[0].max_hrs - 6))
+            {
             strcpy(emplyees[0].worktime[j],"11:30 - 19:30");
             emplyees[0].hrs += 8;
             qsort(emplyees,total_employees, sizeof(employee_type),sort_by_hrs);
             printf("%s has %d hours left \n", emplyees[0].first_name, emplyees[0].hrs);
+            } else
+                printf("NO MORE EMPLOYEES\n");
         }
         for (int m = 0; m < shift_employees[j][2]; ++m)
         {
+            if (emplyees[0].hrs <= (emplyees[0].max_hrs - 6))
+            {
             strcpy(emplyees[0].worktime[j],"19:00 - 01:00");
             emplyees[0].hrs += 6;
             qsort(emplyees,total_employees, sizeof(employee_type),sort_by_hrs);
             printf("%s has %d hours left \n", emplyees[0].first_name, emplyees[0].hrs);
+            } else
+                printf("NO MORE EMPLOYEES\n");
         }
     }
     qsort(emplyees,total_employees, sizeof(employee_type),sort_by_name);
