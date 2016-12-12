@@ -63,8 +63,8 @@ void print_employees(int length, employee_type *employees);
 void get_required_empolyees(int total_flights[week], double shift_employees[week][3], flight_array_type *flights);
 void employees_in_time_intervals(int total_flights, flight_type *flights, double *morning_employees, double *day_employees, double *night_employees);
 int flights_in_interval(int total_flights, char *interval, flight_type *flights, flight_type *flights_in_interval);
-double find_empolyees_in_shifts(int total_flights_in_shift, flight_type *flights_in_shift);
-double find_max_flights_hour_interval(int length, flight_type *flights);
+double find_employees_in_shifts(int total_flights_in_shift, flight_type *flights_in_shift);
+double find_max_flights_hour_interval(int total_flight_in_shift, flight_type *flights);
 double basic_employees_shift(int total_flights, flight_type *flights);
 void assign_worktime(int total_employees, employee_type *emplyees, double shift_employees[week][3]);
 int sort_by_hrs(const void *a, const void *b);
@@ -257,9 +257,9 @@ void employees_in_time_intervals(int total_flights, flight_type *flights, double
     total_day_flights = flights_in_interval(total_flights, day_shift, flights, day_flights);
     total_night_flights = flights_in_interval(total_flights, night_shift, flights, night_flights);
     
-    *morning_employees = find_empolyees_in_shifts(total_morning_flights, morning_flights);
-    *day_employees = find_empolyees_in_shifts(total_day_flights, day_flights);
-    *night_employees = find_empolyees_in_shifts(total_night_flights, night_flights);
+    *morning_employees = find_employees_in_shifts(total_morning_flights, morning_flights);
+    *day_employees = find_employees_in_shifts(total_day_flights, day_flights);
+    *night_employees = find_employees_in_shifts(total_night_flights, night_flights);
     
     printf("%f %f %f\n\n\n",*morning_employees, *day_employees, *night_employees);
 }
@@ -283,28 +283,28 @@ int flights_in_interval(int total_flights, char *interval, flight_type *flights,
     return j;
 }
 
-double find_empolyees_in_shifts(int total_flights_in_shift, flight_type *flights_in_shift)
+double find_employees_in_shifts(int total_flights_in_shift, flight_type *flights_in_shift)
 {
     double basic_employees_pr_shift = basic_employees_shift(total_flights_in_shift, flights_in_shift);
-    double max_flights_hour_interval = find_max_flights_hour_interval(total_flights_in_shift, flights_in_shift);
+    double employees_in_hour_interval = find_max_flights_hour_interval(total_flights_in_shift, flights_in_shift);
     double employees;
     
     printf("basic: %lf\n",basic_employees_pr_shift);
 	//printf("start: %.4d end: %.4d\n", start_time, end_time);
     //printf("%lf\n",basic_employees_pr_shift);
     
-    employees = 6; //(basic_employees_pr_shift) + (max_flights_hour_interval);
+    employees = (basic_employees_pr_shift) + (employees_in_hour_interval);
     
     return employees;
 }
 
-double find_max_flights_hour_interval(int length, flight_type *flights)
+double find_max_flights_hour_interval(int total_flight_in_shift, flight_type *flights)
 {
     int flight_hour, flight_minute, flight_time, flight_hour_cmp, flight_minute_cmp, flight_time_cmp;
     int max_flights_hour_interval = 0, flights_hour_interval = 0;
     int time_flight_hour_interval, total_passengers_hour_interval, passengers;
     
-    for (int i = 0; i < length ; ++i)
+    for (int i = 0; i < total_flight_in_shift ; ++i)
     {
         //printf("%d flights for %s at %s and 1 hour forward\n\n", flights_hour_interval, flights[i - 1].flight_model, flights[i - 1].time);
         if (max_flights_hour_interval < flights_hour_interval)
@@ -318,7 +318,7 @@ double find_max_flights_hour_interval(int length, flight_type *flights)
         passengers = 0;
         sscanf(flights[i].time, "%d:%d", &flight_hour, &flight_minute);
         flight_time = flight_hour * 100 + flight_minute;
-        for (int j = i; j < length; ++j)
+        for (int j = i; j < total_flight_in_shift; ++j)
         {
             sscanf(flights[j].time, "%d:%d", &flight_hour_cmp, &flight_minute_cmp);
             flight_time_cmp = flight_hour_cmp * 100 + flight_minute_cmp;
