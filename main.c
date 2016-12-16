@@ -48,33 +48,33 @@ typedef struct {
     char worktime[week][MAX_WORKTIME];
 } employee_type;
 
-/* prototypes */
+/* Prototypes */
 void get_total_flights(int total_flights[week], char flight_files[week][40]);
-int count_lines(char *file);
 void set_array_size(flight_array_type *flights, int total_flights[week]);
 void free_array(flight_array_type *flights, int total_flights[week]);
 void get_all_flights(char flight_files[week][40], int total_flights[week], flight_array_type *flights);
 void scan_for_flight_data(char *file, int total_flights, flight_type *flights);
 void scan_for_employee_data(char *file, int total_employees, employee_type *employees);
-flight_type read_flights(FILE *fp);
-employee_type read_employees(FILE *fp);
+void assign_worktime(int total_employees, employee_type *emplyees, double shift_employees[week][3]);
 void print_flights(int length, flight_type *flights);
 void print_employees(int length, employee_type *employees);
 void get_required_empolyees(int total_flights[week], double shift_employees[week][3], flight_array_type *flights);
+void print_weekschedule(int total_employees, employee_type *employee);
 void employees_in_time_intervals(int total_flights, flight_type *flights, double *morning_employees, double *day_employees, double *night_employees);
 int flights_in_interval(int total_flights, char *interval, flight_type *flights, flight_type *flights_in_interval);
+int count_lines(char *file);
+int sort_by_hrs(const void *a, const void *b);
+int sort_by_name(const void *a, const void *b);
 double find_employees_in_shifts(int total_flights_in_shift, flight_type *flights_in_shift);
 double find_max_flights_hour_interval(int total_flight_in_shift, flight_type *flights);
 double basic_employees_shift(int total_flights, flight_type *flights);
-void assign_worktime(int total_employees, employee_type *emplyees, double shift_employees[week][3]);
-int sort_by_hrs(const void *a, const void *b);
-int sort_by_name(const void *a, const void *b);
-void print_weekschedule(int total_employees, employee_type *employee);
-/* end of prototypes */
+flight_type read_flights(FILE *fp);
+employee_type read_employees(FILE *fp);
+/* End of prototypes */
 
 int main(void)
 {
-    srand (time(NULL));
+    srand(time(NULL));
     int total_flights[week], total_employees;
     double shift_employees[week][3];
     char flight_files[week][40] = {"Flights/flight-05-12-2016-monday.txt","Flights/flight-06-12-2016-tuesday.txt",
