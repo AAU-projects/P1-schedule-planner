@@ -1,3 +1,22 @@
+/* Aalborg University
+ * Bachelor Software
+ * 1. Semester
+ *
+ * Project: P1 - Baggage handling
+ * Group: B2-1a
+ * Group Members:   Rasmus E. Nielsen
+ *                  Lukas Rønsholt
+ *                  Mickey Svendsen
+ *                  Lasse Lundbo
+ *                  Alexander Vassiliev
+ *                  Gustav Brodersen
+ *                  Magnus T. Boisen
+ *
+ * Description:
+ *  Program to make a week schedule, in a effort to eliminate understaffing.
+ *  The progam will decide how many employees that are need, depending on how many flights that are
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -12,6 +31,7 @@
 #define MAX_NAME 15
 #define MAX_WORKTIME 14
 #define PASSENGERS_PER_EMPLOYEE 38
+#define PASSENGERS_PER_HOUR 310
 #define HOUR_MILITARYTIME 100
  
 enum weekdays 
@@ -55,7 +75,7 @@ int sort_by_name(const void *a, const void *b);
 int flights_in_interval(int total_flights, char *interval, flight_type *flights, flight_type *flights_in_interval);
 void print_flights(int length, flight_type *flights);
 void print_employees(int length, employee_type *employees);
-void free_array(flight_array_type *flights, int total_flights[week]);
+void free_array(flight_array_type *flights);
 void print_weekschedule(int total_employees, employee_type *employee);
 void set_array_size(flight_array_type *flights, int total_flights[week]);
 void get_total_flights(int total_flights[week], char flight_files[week][40]);
@@ -74,12 +94,15 @@ employee_type read_employees(FILE *fp);
 
 int main(void)
 {
-    srand(time(NULL));
+    srand(time(NULL));                                                                                                  /* Generates a random seed */
     int total_flights[week], total_employees;
     double shift_employees[week][3];
-    char flight_files[week][40] = {"Flights/flight-05-12-2016-monday.txt","Flights/flight-06-12-2016-tuesday.txt",
-                                   "Flights/flight-07-12-2016-wednesday.txt","Flights/flight-08-12-2016-thursday.txt",
-                                   "Flights/flight-09-12-2016-friday.txt","Flights/flight-10-12-2016-saturday.txt",
+    char flight_files[week][40] = {"Flights/flight-05-12-2016-monday.txt",
+                                   "Flights/flight-06-12-2016-tuesday.txt",
+                                   "Flights/flight-07-12-2016-wednesday.txt",
+                                   "Flights/flight-08-12-2016-thursday.txt",
+                                   "Flights/flight-09-12-2016-friday.txt",
+                                   "Flights/flight-10-12-2016-saturday.txt",
                                    "Flights/flight-11-12-2016-sunday.txt"}; 
     char employee_file[] = "Employees.txt";
     
@@ -99,17 +122,17 @@ int main(void)
 
     //print_employees(total_employees, employees);
     print_weekschedule(total_employees, employees);
-
-    free_array(flights, total_flights);
+    
+    free_array(flights);
 }
 
 /*
- *Description: Puts the total amount of flights in a period of a day and puts it over to an array with the use of the Count_lines function. 
- *Input: Array with various weekdays including weekday files. 
- *Output: Number of lines in the various weekdays. 
- */ 
-
-
+ * @Description: Puts the total amount of flights in a period of a
+ *  day and puts it over to an array with the use of the Count_lines function.
+ *
+ * @Input: Array with various weekdays including weekday files.
+ * @Output: Number of lines in the various weekdays.
+ */
 void get_total_flights(int total_flights[week], char flight_files[week][40])
 {
     for (int i = 0; i < week; ++i)
@@ -121,9 +144,10 @@ void get_total_flights(int total_flights[week], char flight_files[week][40])
 
 
 /*
- * Description: Counts the number of lines in the file until it reaches End of File. 
- * Input: File with text. 
- * Returns: The number of lines. 
+ * @Description: Counts the number of lines in the given file until it reaches End of File.
+ *
+ * @Input: File.
+ * @Returns: The number of lines.
  */ 
 int count_lines(char *file)
 {
@@ -143,7 +167,11 @@ int count_lines(char *file)
     return counter;
 }
 /*
- *Description: Alokere plads til array af struct flight_array_type  
+ * @Description: Allocate the needed memory to the array, using calloc to remove any data stored
+ *  in the array before resizing.
+ *
+ * @Input: The flight_array_type array and the array containing the total flight on each day.
+ * @Output: The resized array in flight_array_type
  */ 
 void set_array_size(flight_array_type *flights, int total_flights[week])
 {
@@ -154,11 +182,12 @@ void set_array_size(flight_array_type *flights, int total_flights[week])
 }
   
 /*
- * Description:
- * Input:
- * Output: 
- */  
-void free_array(flight_array_type *flights, int total_flights[week])
+ * @Description: Frees the array for a week
+ *
+ * @Input: The array containing all flights
+ * @Output: None.
+ */
+void free_array(flight_array_type *flights)
 {
     for (int i = 0; i < week; ++i)
     {
@@ -167,9 +196,10 @@ void free_array(flight_array_type *flights, int total_flights[week])
 }
 
 /*
- * Description: Scans data for weekdays 
- * Input: File, number of flights in the weekday, and the array where the data can be stored. 
- * Output: Array with flight data
+ * @Description: Scans data for a week
+ *
+ * @Input: File, number of flights in the weekday, and the array where the data can be stored.
+ * @Output: Array with flight data
  */    
 void get_all_flights(char flight_files[week][40], int total_flights[week], flight_array_type *flights)
 {
@@ -181,6 +211,7 @@ void get_all_flights(char flight_files[week][40], int total_flights[week], fligh
 
 /*
  * Description: Scans every line in the file.
+ *
  * Input: File, number of flights, and the array where the data can be stored.
  * Output: Array with flight data
  */    
@@ -196,9 +227,10 @@ void scan_for_flight_data(char *file, int total_flights, flight_type *flights)
 }
   
 /*
- * Description: Scans for the data of the number of employees available 
+ * Description: Scans for the data of the number of employees available.
+ *
  * Input: File, number of employees, employee array
- * Output: employee array with data
+ * Output: Employee array with data
 */  
 void scan_for_employee_data(char *file, int total_employees, employee_type *employees)
 {
@@ -212,7 +244,9 @@ void scan_for_employee_data(char *file, int total_employees, employee_type *empl
 }
 
 /*
- * Description: Stores the various data in the struct Flight_type.  
+ * Description: Reads the line that the that the pointer is curently pointing too,
+ * and stores the data in a temporary struct Flight_type, and returns it.
+ *
  * Input: File. 
  * Returns: Flight data from line.
 */    
@@ -232,6 +266,13 @@ flight_type read_flights(FILE *fp)
     return flight;
 }
 
+/*
+ * Description: Reads the line that the that the pointer is curently pointing too,
+ * and stores the data in a temporary struct Flight_type, and returns it.
+ *
+ * Input: File.
+ * Returns: Employee data.
+*/
 employee_type read_employees(FILE *fp)
 {
     employee_type employee;
@@ -243,6 +284,12 @@ employee_type read_employees(FILE *fp)
     return employee;
 }
 
+/*
+ * Description: Prints flight data from an array up to a given length.
+ *
+ * Input: length, array containing flights.
+ * Returns: None.
+*/
 void print_flights(int length, flight_type *flights)
 {
     for (int i = 0; i < length; ++i)
@@ -258,6 +305,12 @@ void print_flights(int length, flight_type *flights)
     }
 }
 
+/*
+ * Description: Prints employee data from an array up to a given length.
+ *
+ * Input: length, array containing the employees.
+ * Returns: None.
+*/
 void print_employees(int length, employee_type *employees)
 {
     for (int i = 0; i < length; ++i)
@@ -276,6 +329,12 @@ void print_employees(int length, employee_type *employees)
     }
 }
 
+/*
+ * Description: Get the needed employees for the 3 shift on every day in the week
+ *
+ * Input: The total number of flight though out the week, the array to hold the employees, the flight array.
+ * Returns: The filled out array with the needed employees.
+*/
 void get_required_empolyees(int total_flights[week], double shift_employees[week][3], flight_array_type *flights)
 {
     for (int i = 0; i < week; ++i)
@@ -286,9 +345,10 @@ void get_required_empolyees(int total_flights[week], double shift_employees[week
 }
 
 /*
- * Description: Calculates the number of employees needed for the different shifts.  
- * Input:
- * Output: 
+ * Description: Calculates the number of employees needed for the different shifts on a day.
+ *
+ * Input: The total number of flight, the array containing the flights, and pointers to the 3 shifts
+ * Output: The 3 pointers to the shifts.
  */  
 void employees_in_time_intervals(int total_flights, flight_type *flights, double *morning_employees, double *day_employees, double *night_employees)
 {
@@ -306,20 +366,21 @@ void employees_in_time_intervals(int total_flights, flight_type *flights, double
     *morning_employees = find_employees_in_shifts(total_morning_flights, morning_flights);
     *day_employees = find_employees_in_shifts(total_day_flights, day_flights);
     *night_employees = find_employees_in_shifts(total_night_flights, night_flights);
-    
-    printf("%f %f %f\n\n\n",*morning_employees, *day_employees, *night_employees);
 }
   
 /*
- * Description: Calculates the number of flights in the shift interval.  
- * Input: 
+ * Description: Find, Stores and Calculates the number of flights in the shift interval.
+ *
+ * Input: The total flights, the interval, the array containing the flights,
+ *  the array to hold the flights in the interval
  * Output: Array with the flights in the the shift interval
+ * Return: The number of flights found
  */ 
 int flights_in_interval(int total_flights, char *interval, flight_type *flights, flight_type *flights_in_interval)
 {
     char interval_start[MAX_TIME], interval_end[MAX_TIME];
     int j = 0;
-    sscanf(interval, " %s - %s", interval_start, interval_end);
+    sscanf(interval, " %s - %s", interval_start, interval_end);                                                         /* Convert the interval to a staring time and a ending time */
     
     for (int i = 0; i < total_flights; ++i)
     {
@@ -334,8 +395,9 @@ int flights_in_interval(int total_flights, char *interval, flight_type *flights,
 }
   
 /*
- * Description: Calculates the number of employees   
- * Input:
+ * Description: Calculates the number of employees needed depending on the flights.
+ *
+ * Input: The the total flights, the array containing the flights.
  * Returns: Number of employees needed
  */ 
 double find_employees_in_shifts(int total_flights_in_shift, flight_type *flights_in_shift)
@@ -344,19 +406,16 @@ double find_employees_in_shifts(int total_flights_in_shift, flight_type *flights
     double employees_in_hour_interval = find_max_flights_hour_interval(total_flights_in_shift, flights_in_shift);
     double employees;
     
-    printf("basic: %lf\n",basic_employees_pr_shift);
-    //printf("start: %.4d end: %.4d\n", start_time, end_time);
-    //printf("%lf\n",basic_employees_pr_shift);
-    
     employees = (basic_employees_pr_shift) + (employees_in_hour_interval);
     
     return employees;
 }
   
 /*
- * Description: Calculates the number of employees needed in a period with most flights in any given shift
- * Input:
- * Returns: Convertion of data which is number of needed employees
+ * Description: Calculates the number of employees needed in a period with most flights in any given shift.
+ *
+ * Input: The total number of flights, The array containing the flights
+ * Returns: Conversion of data which is number of needed employees
  */ 
 double find_max_flights_hour_interval(int total_flight_in_shift, flight_type *flights)
 {
@@ -366,8 +425,7 @@ double find_max_flights_hour_interval(int total_flight_in_shift, flight_type *fl
     
     for (int i = 0; i < total_flight_in_shift ; ++i)
     {
-        //printf("%d flights for %s at %s and 1 hour forward\n\n", flights_hour_interval, flights[i - 1].flight_model, flights[i - 1].time);
-        if (max_flights_hour_interval < flights_hour_interval)
+        if (max_flights_hour_interval < flights_hour_interval)                                                          /*If a new max is found save the data*/
         {
             max_flights_hour_interval = flights_hour_interval;
             time_flight_hour_interval = flight_time;
@@ -376,34 +434,31 @@ double find_max_flights_hour_interval(int total_flight_in_shift, flight_type *fl
         }
         flights_hour_interval = 0;
         passengers = 0;
-        sscanf(flights[i].time, "%d:%d", &flight_hour, &flight_minute);
-        flight_time = flight_hour * 100 + flight_minute;
+        sscanf(flights[i].time, "%d:%d", &flight_hour, &flight_minute);                                                 /*Convert the time from char to 2 ints*/
+        flight_time = flight_hour * 100 + flight_minute;                                                                /*Convert the 2 ints to one int, holing time in militarytime*/
         for (int j = i; j < total_flight_in_shift; ++j)
         {
-            sscanf(flights[j].time, "%d:%d", &flight_hour_cmp, &flight_minute_cmp);
-            flight_time_cmp = flight_hour_cmp * 100 + flight_minute_cmp;
+            sscanf(flights[j].time, "%d:%d", &flight_hour_cmp, &flight_minute_cmp);                                     /*Convert the time from char to 2 ints*/
+            flight_time_cmp = flight_hour_cmp * 100 + flight_minute_cmp;                                                /*Convert the 2 ints to one int, holing time in militarytime*/
             
-            //printf("Flight forward 1 hour %d\n", flight_time + HOUR_MILITARYTIME);
-            //printf("flight_cmp is this lower?: %d\n", flight_time_cmp);
-            
-            if (flight_time <= flight_time_cmp && (flight_time + HOUR_MILITARYTIME) >= flight_time_cmp)
+            if (flight_time <= flight_time_cmp && (flight_time + HOUR_MILITARYTIME) >= flight_time_cmp)                 /* Check if the time is within an hour of the flight from the first loop*/
             {
                 ++flights_hour_interval;
                 passengers += flights[j].passengers;
-                
-                //printf("YES\n");
             }
         }
     }
     
-    printf("Max flights at %.4d - %.4d is %d with %d\n", time_flight_hour_interval, time_flight_hour_interval+HOUR_MILITARYTIME, max_flights_hour_interval, total_passengers_hour_interval);
-    return (max_flights_hour_interval/2) + (total_passengers_hour_interval/310);
+    return (max_flights_hour_interval/2) + (total_passengers_hour_interval/PASSENGERS_PER_HOUR);                        /* The number of flights halved returns needed employees plus
+                                                                                                                         * the total passengers in those flights and the total employees already calculated
+                                                                                                                         * is expected to handle 310 passengers in that one busy hour */
 }
 
 /*
- * Description: Calculates the number of employees needed to handle the total passengers in the shift.  
- * Input: 
- * Returns: Convertion to number of needed employees
+ * Description: Calculates the number of employees needed to handle the total passengers in the shift.
+ *
+ * Input: The total flights, the array containing the flights.
+ * Returns: Conversion to number of needed employees
  */ 
 double basic_employees_shift(int total_flights, flight_type *flights)
 {
@@ -416,22 +471,27 @@ double basic_employees_shift(int total_flights, flight_type *flights)
             avg_passengers += flights[i].passengers;
         } else if (!strcmp(flights[i].travel_type, "DPT"))
         {
-            avg_passengers += flights[i].passengers * 1.5;
+            avg_passengers += flights[i].passengers * 1.5;                                                              /* Departures is expected to need more employees, passengers is increased by 50% */
         }
         
     }
     
-    return (avg_passengers/total_flights)/PASSENGERS_PER_EMPLOYEE;
+    return (avg_passengers/total_flights)/PASSENGERS_PER_EMPLOYEE;                                                      /* Average passengers divided by the amount of passenger expected to be handle by one employee*/
 }
 
 /*
- * Description: Assigning worktime to all employeees for all days any shifts 
- * Input:
- * Output: 
+ * Description: Assigning worktime to all employeees for all days any shifts.
+ *  By sorting the array after the employees working hours, and using the first employee in the
+ *  array, the hours need will be divided equal out to the employees, and all get as close the their
+ *  max working hours. in case of one or more employees have the same amount of hours, the order need to
+ *  be random.
+ *
+ * Input: The total employees, the array containing the employees, and the array containing the need employees per shift
+ * Output: The filled out worktime for the employees.
  */ 
 void assign_worktime(int total_employees, employee_type *emplyees, double shift_employees[week][3])
 {
-    for (int n = 0; n < total_employees; n++)
+    for (int n = 0; n < total_employees; n++)                                                                           /* Initialize the worktime for each employee, to an empty sting*/
     {
         emplyees[n].hrs = 0;
         for (int j = 0; j < week; j++)
@@ -448,10 +508,9 @@ void assign_worktime(int total_employees, employee_type *emplyees, double shift_
         {
             if (emplyees[0].hrs <= (emplyees[0].max_hrs - 6))
             {
-            strcpy(emplyees[0].worktime[j],"04:00 - 12:00");
-            emplyees[0].hrs += 8;
-            qsort(emplyees,total_employees, sizeof(employee_type),sort_by_hrs);
-            printf("%s has %d hours left \n", emplyees[0].first_name, emplyees[0].hrs);
+                strcpy(emplyees[0].worktime[j],"04:00 - 12:00");
+                emplyees[0].hrs += 8;
+                qsort(emplyees,total_employees, sizeof(employee_type),sort_by_hrs);
             } else
                 printf("NO MORE EMPLOYEES\n");
         }
@@ -459,10 +518,9 @@ void assign_worktime(int total_employees, employee_type *emplyees, double shift_
         {
             if (emplyees[0].hrs <= (emplyees[0].max_hrs - 6))
             {
-            strcpy(emplyees[0].worktime[j],"11:30 - 19:30");
-            emplyees[0].hrs += 8;
-            qsort(emplyees,total_employees, sizeof(employee_type),sort_by_hrs);
-            printf("%s has %d hours left \n", emplyees[0].first_name, emplyees[0].hrs);
+                strcpy(emplyees[0].worktime[j],"11:30 - 19:30");
+                emplyees[0].hrs += 8;
+                qsort(emplyees,total_employees, sizeof(employee_type),sort_by_hrs);
             } else
                 printf("NO MORE EMPLOYEES\n");
         }
@@ -470,10 +528,9 @@ void assign_worktime(int total_employees, employee_type *emplyees, double shift_
         {
             if (emplyees[0].hrs <= (emplyees[0].max_hrs - 6))
             {
-            strcpy(emplyees[0].worktime[j],"19:00 - 01:00");
-            emplyees[0].hrs += 6;
-            qsort(emplyees,total_employees, sizeof(employee_type),sort_by_hrs);
-            printf("%s has %d hours left \n", emplyees[0].first_name, emplyees[0].hrs);
+                strcpy(emplyees[0].worktime[j],"19:00 - 01:00");
+                emplyees[0].hrs += 6;
+                qsort(emplyees,total_employees, sizeof(employee_type),sort_by_hrs);
             } else
                 printf("NO MORE EMPLOYEES\n");
         }
@@ -481,6 +538,13 @@ void assign_worktime(int total_employees, employee_type *emplyees, double shift_
     qsort(emplyees,total_employees, sizeof(employee_type),sort_by_name);
 }
 
+/*
+ * Description: Function to be used by qsort, to sort after the employees hours,
+ *  and if the hours is equal, sort random.
+ *
+ * Input: 2 const void.
+ * Output: < 0 or > 0
+ */
 int sort_by_hrs(const void *a, const void *b)
 {
     employee_type *pa = (employee_type*)a;
@@ -495,6 +559,12 @@ int sort_by_hrs(const void *a, const void *b)
     return (pa->hrs - pb->hrs);
 }
 
+/*
+ * Description: Function to be used by qsort, to sort after the employees first name.
+ *
+ * Input: 2 const void.
+ * Output: < 0, > 0 or 0
+ */
 int sort_by_name(const void *a, const void *b)
 {
     employee_type *pa = (employee_type*)a;
@@ -503,6 +573,12 @@ int sort_by_name(const void *a, const void *b)
     return (strcmp(pa->first_name, pb->first_name));
 }
 
+/*
+ * Description: Print the week schedule to the standard output
+ *
+ * Input: the total employees, the array containing the employees.
+ * Output: None
+ */
 void print_weekschedule(int total_employees, employee_type *employee)
 {
     printf("\n");
