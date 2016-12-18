@@ -343,8 +343,10 @@ double find_employees_in_shifts(int total_flights_in_shift, flight_type *flights
     double basic_employees_pr_shift = basic_employees_shift(total_flights_in_shift, flights_in_shift);
     double employees_in_hour_interval = find_max_flights_hour_interval(total_flights_in_shift, flights_in_shift);
     double employees;
-    
-    printf("basic: %lf\n",basic_employees_pr_shift);
+
+
+    printf("Busy period: %lf\n", employees_in_hour_interval);    
+    printf("Basic: %lf\n\n",basic_employees_pr_shift);
     //printf("start: %.4d end: %.4d\n", start_time, end_time);
     //printf("%lf\n",basic_employees_pr_shift);
     
